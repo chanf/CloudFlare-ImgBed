@@ -9,6 +9,7 @@ import { fetchUploadConfig } from '../../utils/sysConfig.js';
 import { getDatabase } from '../../utils/databaseAdapter.js';
 import { moderateContent, endUpload } from '../../upload/uploadTools.js';
 import { userAuthCheck, UnauthorizedResponse } from '../../utils/userAuth.js';
+import { resolveMimeType } from '../../utils/mimeType.js';
 
 export async function onRequestPost(context) {
     const { request, env, waitUntil } = context;
@@ -86,7 +87,7 @@ export async function onRequestPost(context) {
         // 构建 metadata
         const metadata = {
             FileName: fileName || fullId,
-            FileType: fileType || null,
+            FileType: resolveMimeType(fileType, fileName || fullId),
             Channel: "HuggingFace",
             ChannelName: hfChannel.name || "HuggingFace_env",
             FileSize: (fileSize / 1024 / 1024).toFixed(2),
